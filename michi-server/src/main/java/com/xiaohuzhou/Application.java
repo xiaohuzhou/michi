@@ -1,9 +1,9 @@
 package com.xiaohuzhou;
 
-import com.xiaohuzhou.annotations.RequestMapping;
-import com.xiaohuzhou.annotations.Route;
+import com.xiaohuzhou.base.annotations.MichiMapping;
+import com.xiaohuzhou.base.annotations.MichiRoute;
+import com.xiaohuzhou.base.enums.RequestMethod;
 import com.xiaohuzhou.base.loader.RouteScanner;
-import com.xiaohuzhou.base.loader.Scanner;
 import com.xiaohuzhou.server.initializer.MichiServerInitializer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -21,8 +21,7 @@ import org.slf4j.LoggerFactory;
  * @Date: 2019/5/3
  * @Description:
  */
-@RequestMapping
-@Route
+@MichiRoute
 public class Application {
 
     private static Logger LOG = LoggerFactory.getLogger(Application.class);
@@ -33,7 +32,9 @@ public class Application {
         try {
             LOG.info("initializing configures");
             //TODO 在进入时间循环监听之前还要加载路由，配置等
-            new RouteScanner("");
+            RouteScanner scanner = new RouteScanner("com.xiaohuzhou");
+
+            System.out.println(scanner.getRouteReferences().size());
 
             ServerBootstrap serverBootstrap = new ServerBootstrap();
             serverBootstrap.group(bossGroup, workGroup)
@@ -54,4 +55,8 @@ public class Application {
         }
     }
 
+    @MichiMapping(value = "/test", method = RequestMethod.GET)
+    public void test() {
+        System.out.println(1);
+    }
 }

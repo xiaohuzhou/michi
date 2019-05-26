@@ -1,11 +1,10 @@
 package com.xiaohuzhou.base.loader;
 
-import com.xiaohuzhou.annotations.RequestMapping;
-import com.xiaohuzhou.annotations.Route;
+import com.xiaohuzhou.base.annotations.MichiMapping;
+import com.xiaohuzhou.base.annotations.MichiRoute;
+import com.xiaohuzhou.base.enums.RequestMethod;
+import org.reflections.Reflections;
 
-import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -28,90 +27,48 @@ public class RouteScanner implements Scanner {
     }
 
     public void doScan(String basePackage) {
-        Class[] classes = new ComponentLoader(basePackage).getClasses();
+        Set<Class<?>> classes = new ComponentLoader(basePackage).getClasses();
 
-        for (int i = 0; i < classes.length; i++) {
-            Class clazz = classes[i];
-            Annotation annotation = clazz.getAnnotation(Route.class);
-
+        classes.forEach(clazz -> {
+            Annotation annotation = clazz.getAnnotation(MichiRoute.class);
             if (annotation != null) {
-                String baseRoute = ((Route) annotation).value();
+                String baseRoute = ((MichiRoute) annotation).value();
                 Method[] methods = clazz.getMethods();
-                for (int j = 0; j < methods.length; j++) {
-                    Method method = methods[i];
-                    RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+
+                Arrays.stream(methods).forEach(method -> {
+                    MichiMapping requestMapping = method.getAnnotation(MichiMapping.class);
                     if (requestMapping != null) {
-                        String requestMethod = requestMapping.method();
+                        RequestMethod enumMethod = requestMapping.method();
+                        String requestMethod = enumMethod.name();
                         String route = requestMapping.value();
 
                         String key = requestMethod + baseRoute + route;
-
                         if (routeReferences.get(key) != null) {
                             throw new RuntimeException("route: " + requestMethod + "  " + baseRoute + route + " is already existed!");
                         }
 
-                        routeReferences.put(requestMethod + baseRoute + route, method);
+                        routeReferences.put(key, method);
                     }
-                }
+                });
             }
-
-        }
-
+        });
     }
 
     private class ComponentLoader implements Loader {
 
-        private Class[] classes;
+        private Set<Class<?>> classes;
 
         private ComponentLoader(String basePackage) {
             this.classes = loadClass(basePackage);
         }
 
-        private Class[] getClasses() {
+        private Set<Class<?>> getClasses() {
             return classes;
         }
 
-        public Class[] loadClass(String basePackage) {
-            try {
-                String absolutePath = getClass().getClassLoader().getResource("").getPath();
-                List<String> classFileNames = getAllFileName(new File(absolutePath), absolutePath);
-
-                Class[] classes = new Class[classFileNames.size()];
-
-                for (int i = 0; i < classFileNames.size(); i++) {
-                    classes[i] = Class.forName(classFileNames.get(i));
-                }
-
-                return classes;
-            } catch (IOException e) {
-                e.printStackTrace();
-                throw new RuntimeException(e);
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-                throw new RuntimeException(e);
-            }
+        public Set<Class<?>> loadClass(String basePackage) {
+            Reflections reflections = new Reflections(basePackage);
+            return reflections.getTypesAnnotatedWith(MichiRoute.class);
         }
-
-        private List<String> getAllFileName(File file, String absolutePath) throws IOException {
-            LinkedList<String> fileNameList = new LinkedList<>();
-            File[] files = file.listFiles();
-
-            for (int i = 0; i < files.length; i++) {
-                File f = files[i];
-                if (f.isDirectory()) {
-                    fileNameList.addAll(getAllFileName(f, absolutePath));
-                } else {
-                    if (f.getName().endsWith(".class")) {
-                        String classPath = f.getAbsolutePath()
-                                .replace(absolutePath, "")
-                                .replaceAll("/", ".")
-                                .replace(".class", "");
-                        fileNameList.addLast(classPath);
-                    }
-                }
-            }
-            return fileNameList;
-        }
-
     }
 }

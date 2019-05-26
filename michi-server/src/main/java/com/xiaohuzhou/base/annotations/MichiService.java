@@ -1,4 +1,4 @@
-package com.xiaohuzhou.annotations;
+package com.xiaohuzhou.base.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -12,5 +12,5 @@ import java.lang.annotation.Target;
  */
 @Target({ElementType.METHOD,ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Service {
+public @interface MichiService {
 }

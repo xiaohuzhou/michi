@@ -1,4 +1,6 @@
-package com.xiaohuzhou.annotations;
+package com.xiaohuzhou.base.annotations;
+
+import com.xiaohuzhou.base.enums.RequestMethod;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -12,9 +14,9 @@ import java.lang.annotation.Target;
  */
 @Target({ElementType.METHOD,ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface RequestMapping {
+public @interface MichiMapping {
 
     String value() default ""; //请求路径
 
-    String method() default ""; //请求方法
+    RequestMethod method() default RequestMethod.GET; //请求方法
 }

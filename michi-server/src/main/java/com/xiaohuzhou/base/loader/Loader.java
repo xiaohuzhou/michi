@@ -1,5 +1,7 @@
 package com.xiaohuzhou.base.loader;
 
+import java.util.Set;
+
 /**
  * @Auther: ZhouXiaoHu
  * @Date: 2019/5/26
@@ -7,5 +9,5 @@ package com.xiaohuzhou.base.loader;
  */
 public interface Loader {
 
-    Class[] loadClass(String basePackage);
+    Set<Class<?>> loadClass(String basePackage);
 }
