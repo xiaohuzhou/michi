@@ -7,5 +7,5 @@ package com.xiaohuzhou.base.loader;
  */
 public interface Scanner {
 
-    void doScan(String basePackage);
+    void doScan() throws IllegalAccessException, InstantiationException;
 }

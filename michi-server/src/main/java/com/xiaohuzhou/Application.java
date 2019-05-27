@@ -3,7 +3,7 @@ package com.xiaohuzhou;
 import com.xiaohuzhou.base.annotations.MichiMapping;
 import com.xiaohuzhou.base.annotations.MichiRoute;
 import com.xiaohuzhou.base.enums.RequestMethod;
-import com.xiaohuzhou.base.loader.RouteScanner;
+import com.xiaohuzhou.base.loader.ComponentScanner;
 import com.xiaohuzhou.server.initializer.MichiServerInitializer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -31,10 +31,8 @@ public class Application {
         EventLoopGroup workGroup = new NioEventLoopGroup();
         try {
             LOG.info("initializing configures");
-            //TODO 在进入时间循环监听之前还要加载路由，配置等
-            RouteScanner scanner = new RouteScanner("com.xiaohuzhou");
-
-            System.out.println(scanner.getRouteReferences().size());
+            //在进入事件循环监听之前还要加载路由，配置等
+            ComponentScanner.startScanner("com.xiaohuzhou");
 
             ServerBootstrap serverBootstrap = new ServerBootstrap();
             serverBootstrap.group(bossGroup, workGroup)
@@ -55,8 +53,8 @@ public class Application {
         }
     }
 
-    @MichiMapping(value = "/test", method = RequestMethod.GET)
-    public void test() {
-        System.out.println(1);
-    }
+//    @MichiMapping(value = "/test", method = RequestMethod.GET)
+//    public void test() {
+//        System.out.println(1);
+//    }
 }

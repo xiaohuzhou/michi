@@ -107,6 +107,12 @@
             <version>0.9.11</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.9.8</version>
+        </dependency>
+
     </dependencies>
 
     <!--protobuf用于生成文件的maven插件，相较于protoc来说，这个插件可以生成调用方法，protoc不行-->

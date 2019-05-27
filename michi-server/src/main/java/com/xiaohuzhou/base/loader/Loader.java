@@ -1,5 +1,7 @@
 package com.xiaohuzhou.base.loader;
 
+import com.xiaohuzhou.base.filter.Filter;
+
 import java.util.Set;
 
 /**
@@ -9,5 +11,9 @@ import java.util.Set;
  */
 public interface Loader {
 
-    Set<Class<?>> loadClass(String basePackage);
+    Set<Class<?>> getRoutes();
+
+    Set<Class<? extends Filter>> getFilters();
+
+
 }
